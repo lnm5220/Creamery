@@ -3,13 +3,59 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+- Read the Dataset!
 
 ```{r}
-plot(cars)
+library(readr)
+ice_cream_dataR <- as.data.frame(read_csv("ice_cream_dataR.csv"))
+View(ice_cream_dataR)
 ```
 
-- Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+### Cleaning
+
+- Add a new chunk by clicking the *Insert Chunk* button on the toolbar and selecting *R* or by pressing *Ctrl+Alt+I*.
+- Delete excess columns
+```{r}
+ice_cream_dataR$X4 <- NULL
+ice_cream_dataR$X5 <- NULL
+ice_cream_dataR$X6 <- NULL
+ice_cream_dataR$X7 <- NULL
+
+View(ice_cream_dataR)
+```
+
+- All fixed!
+- Add new column where each flavor is grouped and the total number is in a column called "count"
+- Remove columns with NA
+
+```{r}
+
+GraphData <- 
+  ice_cream_dataR %>%
+  group_by(flavor, cup_or_cone) %>% 
+  summarise(total= n())
+
+FinalGraphData <- na.omit(GraphData) 
+View(FinalGraphData)
+```
+
+
+### Visualization
+```{r}
+library(DataComputing)
+
+FlavorPlot <- ggplot(data=FinalGraphData,aes(x=reorder(flavor,total),y=total ,fill=cup_or_cone))+geom_bar(stat='identity',position='stack', width=.9) + theme(axis.text.x=element_text(angle=60,hjust=1))
+
+FlavorPlot
+```
+
+###What are the top three flavors?
+
+###Consider 1 is a cup and 0 is a cone. Which is more popular, if they are not equal?
+
+
+
+
+
+
 
